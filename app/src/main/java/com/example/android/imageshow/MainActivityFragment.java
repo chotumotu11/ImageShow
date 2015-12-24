@@ -57,12 +57,53 @@ class ImageArray<T> extends ArrayAdapter<T> {
 
 
         image = (ImageView) view;
-        String item1 = (String)getItem(position);
-        new ImageDownloader().execute(item1);
-
+        //String item1 = (String)getItem(position);
+       // new ImageDownloader().execute(item1);
+        image.setImageBitmap((Bitmap)getItem(position));
 
         return image;
 
+    }
+
+
+}
+
+
+public class MainActivityFragment extends Fragment {
+
+
+    List<Bitmap> bitmap= new  ArrayList<Bitmap>();
+    public MainActivityFragment() {
+    }
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        View rootview = inflater.inflate(R.layout.fragment_main, container, false);
+        String[] picArray={
+        "https://www.cse.iitb.ac.in/~pawangc/nature1.jpg","https://upload.wikimedia.org/wikipedia/commons/4/4f/Matterhorn_Riffelsee_2005-06-11.jpg"};
+
+        for(int i=0;i<picArray.length;i++)
+        {
+            new ImageDownloader().execute(picArray[i]);
+
+
+        }
+
+        try{
+            Thread.sleep(10000);
+        }catch(Exception e)
+        {
+
+        }
+
+      //  List<String> forcast = new ArrayList<String>(Arrays.asList(picArray));
+        ImageArray<Bitmap> boo =new ImageArray<Bitmap>(getActivity(),R.layout.image_view,R.id.Image_id,bitmap);
+        ListView listview = (ListView)rootview.findViewById(R.id.listview_forecast);
+        listview.setAdapter(boo);
+
+
+        return rootview;
     }
     class ImageDownloader extends AsyncTask<String,Void,Bitmap>{
 
@@ -96,35 +137,11 @@ class ImageArray<T> extends ArrayAdapter<T> {
                 Log.v("URL Error","Image error");
             }
             else
-                image.setImageBitmap(bmp);
+                bitmap.add(bmp);
 
 
         }
     }
 
 
-}
-
-
-public class MainActivityFragment extends Fragment {
-
-    public MainActivityFragment() {
-    }
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        View rootview = inflater.inflate(R.layout.fragment_main, container, false);
-        String[] picArray={
-        "https://www.cse.iitb.ac.in/~pawangc/nature1.jpg","https://upload.wikimedia.org/wikipedia/commons/4/4f/Matterhorn_Riffelsee_2005-06-11.jpg"};
-
-
-        List<String> forcast = new ArrayList<String>(Arrays.asList(picArray));
-        ImageArray<String> boo =new ImageArray<String>(getActivity(),R.layout.image_view,R.id.Image_id,forcast);
-        ListView listview = (ListView)rootview.findViewById(R.id.listview_forecast);
-        listview.setAdapter(boo);
-
-
-        return rootview;
-    }
 }
